@@ -21,8 +21,12 @@ def getImages(types:str,ids:int):
             check="yes"
         else:
             check="no"
+        if ids==1:
+            check1="yes"
+        else:
+            check1="no"
         connect.close()
-        return {"image":data[1].decode("utf-8"),"credit":data[2],"last?":check}
+        return {"image":data[1].decode("utf-8"),"credit":data[2],"last?":check,"first?":check1}
     else:
         return {"no type found":":("}
 
