@@ -52,13 +52,19 @@ def number(types:str):
     else:
         return 0
 
-@app.get("/images/random/pfp")
-def randomImage():
-    connect=sqlite3.connect("Image.db")
-    cursor=connect.cursor()
-    cursor.execute("SELECT * FROM pfps")
-    data=cursor.fetchall()
-    image=random.choice(data)
-    image=image[1]
-    img=base64.b64encode(image)#here is a problem, giving 422 error, which means the code and requests was taken but can't send information? but i'll look at its types
-    return {"image":img}
+@app.get("/randomimages/{types}")
+def randomImage(types:str):
+    if types =="pfps":
+        connect=sqlite3.connect("Image.db")
+        cursor=connect.cursor()
+        cursor.execute(f"SELECT image FROM {types}")
+        data=cursor.fetchall()
+        image=random.choice(data)
+        print(type(image))
+        image=image[0]
+        print(type(image))
+        img=base64.b64encode(image)
+        print(type(img))
+        return {"image":img}
+    else:
+        raise HTTPException(404)#fixed this error, shouldn't give 422 error, i actually changed the name and put types, working right now
