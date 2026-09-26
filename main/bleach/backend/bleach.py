@@ -18,9 +18,9 @@ randomImage=ImageTk.PhotoImage(data=img,format='png')
 Imagebutton=Button(window,image=randomImage,command=lambda:downloadImage(img,f"#{random.randint(0,1000)}"))
 Imagebutton.place(anchor=CENTER,rely=0.5,relx=0.5)
 rightSide=CTkButton(window,text=">",state=DISABLED)
-rightSide.place(anchor=CENTER,rely=0.5,relx=0.8)
+rightSide.place(anchor=CENTER,rely=0.5,relx=0.95)
 leftSide=CTkButton(window,text="<",state=DISABLED)
-leftSide.place(anchor=CENTER,rely=0.5,relx=0.2)
+leftSide.place(anchor=CENTER,rely=0.5,relx=0.05)
 pfpButton=CTkButton(window,text="PFPs!",command=lambda:otherWindows("pfps",1))
 pfpButton.place(anchor=CENTER,rely=0.9,relx=0.4)
 wallpaperButton=CTkButton(window,text="Wallpapers!",command=lambda:otherWindows("wallpapers",1))
@@ -35,14 +35,8 @@ def downloadImage(image:bytes,name:str):
 def otherWindows(text:str,ids:int,rightbutton:CTkButton=rightSide,leftbutton:CTkButton=leftSide,pfp:CTkButton=pfpButton,wallpaperButton:CTkButton=wallpaperButton,label:CTkLabel=labelNumber,images=randomImage,imageButton=Imagebutton):
     global window
     global randomImage
-    if text=="pfps":
-        pfp.configure(state=DISABLED)
-        wallpaperButton.configure(state=NORMAL)
-    elif text=="wallpapaers":
-        pfp.configure(state=NORMAL)
-        wallpaperButton.configure(state=DISABLED)
-    else:
-        return print("Something's wrong there...")
+    imageButton.destroy()
+    imageButton.destroy()
     imageButton.destroy()
     data=requests.get(f"http://127.0.0.1:8000/images/{text}/{ids}")
     info=data.content
@@ -50,7 +44,7 @@ def otherWindows(text:str,ids:int,rightbutton:CTkButton=rightSide,leftbutton:CTk
     image=info["image"]
     image=base64.b64decode(image)
     randomImage=ImageTk.PhotoImage(data=image,format='png')
-    imageButton=Button(window,image=randomImage,command=lambda:downloadImage(image,f"-bleach-{ids}"))
+    imageButton=Button(window,image=randomImage,command=lambda:downloadImage(image,f"-bleach-{ids}"),height=randomImage.height(),width=randomImage.width())
     imageButton.place(anchor=CENTER,rely=0.5,relx=0.5)
     label.configure(text=f"{ids}")
     if info["last?"] =="yes":
@@ -63,6 +57,14 @@ def otherWindows(text:str,ids:int,rightbutton:CTkButton=rightSide,leftbutton:CTk
         left=NORMAL
     rightbutton.configure(state=right,command=lambda:otherWindows(text,ids+1,imageButton=imageButton))
     leftbutton.configure(state=left,command=lambda:otherWindows(text,ids-1,imageButton=imageButton))
+    if text=="pfps":
+        pfp.configure(state=DISABLED,command=lambda:otherWindows("pfps",1,imageButton=imageButton))
+        wallpaperButton.configure(state=NORMAL,command=lambda:otherWindows("wallpapers",1,imageButton=imageButton))
+    elif text=="wallpapers":
+        pfp.configure(state=NORMAL,command=lambda:otherWindows("pfps",1,imageButton=imageButton))
+        wallpaperButton.configure(state=DISABLED,command=lambda:otherWindows("wallpapers",1,imageButton=imageButton))
+    else:
+        return print("Something's wrong there...")
 
 window.mainloop()
 
@@ -70,3 +72,7 @@ window.mainloop()
 #and there are more things left though, my db only has three images for now and only of pfps, now i will also add wallpapers to it
 #maybe shifting from sqlite3 to mysql, and decoraton still matters for better ui/ux, so we will be working on that
 #also, imported the db file, and backend...and all set!
+#date 09/25/26
+#and a few more changes, using height and width of ImageTk.PhotoImage because the wallpaper size and pfp sizes are different and if you don't do that, the last image size will appear at the button, hence wrong ux
+#and yes, almost all rest is fine
+#date 09/26/26
