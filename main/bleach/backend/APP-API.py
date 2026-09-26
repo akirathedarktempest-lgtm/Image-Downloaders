@@ -7,9 +7,11 @@ app=FastAPI()
 
 @app.get("/images/{types}/{ids}")
 def getImages(types:str,ids:int):
-    if types=="pfps" or types=="wallpapers" or types=="fandoms":
+    if types=="pfps" or types=="wallpapers":
         if ids>number(types):
-            return {"Out of the range":":("}
+            raise HTTPException(404)
+        if ids<1:
+            raise HTTPException(404)
         connect=sqlite3.connect("Image.db")
         cursor=connect.cursor()
         cursor.execute(f"""CREATE TABLE IF NOT EXISTS {types}(
@@ -34,10 +36,23 @@ def getImages(types:str,ids:int):
         print(type(image))
         return {"image":image,"credit":data[2],"last?":check,"first?":check1,"ids":ids}
     else:
-        return {"no type found":":("}
+        raise HTTPException(404)
+
+def wallpaperNumber(types:str="wallpapers"):
+    if types=="wallpapers":
+        connect=sqlite3.connect("WallImage.db")
+        cursor=connect.cursor()
+        cursor.execute(f"""CREATE TABLE IF NOT EXISTS {types}(
+                            id INTEGER,
+                            image BLOB,
+                            credit TEXT,
+                            type TEXT)""")
+        cursor.execute("SELECT * FROM {types}")
+        info=cursor.fetchall()
+        return len(info)#there's no use of this, ignore this command
 
 def number(types:str):
-    if types=="pfps" or types=="wallpapers" or types=="fandoms":
+    if types=="pfps" or types=="wallpapers":
         connect=sqlite3.connect("Image.db")
         cursor=connect.cursor()
         cursor.execute(f"""CREATE TABLE IF NOT EXISTS {types}(
@@ -57,7 +72,7 @@ def randomImage(types:str):
     if types =="pfps":
         connect=sqlite3.connect("Image.db")
         cursor=connect.cursor()
-        cursor.execute(f"SELECT image FROM {types}")
+        cursor.execute(f"SELECT image FROM pfps")
         data=cursor.fetchall()
         image=random.choice(data)
         print(type(image))
@@ -68,3 +83,6 @@ def randomImage(types:str):
         return {"image":img}
     else:
         raise HTTPException(404)
+
+#there was so mess at db, i added wallpapers but i don't know how it only went to pfps table
+#and from pfps table, it was showing them as well, then an hour later i realized it, then shifted them all to wallpapers db and removed from pfps...i don't know what the code of inserting images did, but never mind
