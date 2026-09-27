@@ -9,6 +9,10 @@ from tkinter import Button
 window=CTk()
 window.geometry("1920x1080")
 
+set_appearance_mode('dark')
+
+#font options Castellar, Copperplate Gothic Bold
+
 data=requests.get("http://127.0.0.1:8000/randomimages/pfps")
 image=data.content
 image=json.loads(image)
@@ -17,15 +21,15 @@ img=base64.b64decode(img)
 randomImage=ImageTk.PhotoImage(data=img,format='png')
 Imagebutton=Button(window,image=randomImage,command=lambda:downloadImage(img,f"#{random.randint(0,1000)}"))
 Imagebutton.place(anchor=CENTER,rely=0.5,relx=0.5)
-rightSide=CTkButton(window,text=">",state=DISABLED)
+rightSide=CTkButton(window,text=">",state=DISABLED,hover_color="orange",border_width=1,border_color="white",height=50,width=50,corner_radius=100,text_color="white",bg_color="black",fg_color="black",font=CTkFont("Baskerville Old Face",size=35,weight="bold"))
 rightSide.place(anchor=CENTER,rely=0.5,relx=0.95)
-leftSide=CTkButton(window,text="<",state=DISABLED)
+leftSide=CTkButton(window,text="<",state=DISABLED,hover_color="orange",border_width=1,border_color="white",height=50,width=50,corner_radius=100,text_color="white",bg_color="black",fg_color="black",font=CTkFont("Baskerville Old Face",size=35,weight="bold"))
 leftSide.place(anchor=CENTER,rely=0.5,relx=0.05)
-pfpButton=CTkButton(window,text="PFPs!",command=lambda:otherWindows("pfps",1))
+pfpButton=CTkButton(window,text="PFPs!",command=lambda:otherWindows("pfps",1),fg_color="black",text_color="white",font=CTkFont("Castellar",size=20),hover_color="#851818",height=20,width=50,corner_radius=100)
 pfpButton.place(anchor=CENTER,rely=0.9,relx=0.4)
-wallpaperButton=CTkButton(window,text="Wallpapers!",command=lambda:otherWindows("wallpapers",1))
+wallpaperButton=CTkButton(window,text="Wallpapers!",command=lambda:otherWindows("wallpapers",1),fg_color="black",text_color="white",font=CTkFont("Castellar",size=20),hover_color="#851818",height=20,width=50,corner_radius=100)
 wallpaperButton.place(anchor=CENTER,rely=0.9,relx=0.6)
-labelNumber=CTkLabel(window,text="")
+labelNumber=CTkLabel(window,text="",font=CTkFont("Baskerville Old Face",size=15))
 labelNumber.place(anchor=CENTER,rely=0.1,relx=0.5)
 
 def downloadImage(image:bytes,name:str):
@@ -76,3 +80,6 @@ window.mainloop()
 #and a few more changes, using height and width of ImageTk.PhotoImage because the wallpaper size and pfp sizes are different and if you don't do that, the last image size will appear at the button, hence wrong ux
 #and yes, almost all rest is fine
 #date 09/26/26
+#and tested 14 times, and there aren't much attractive fonts...or i am not good at ui/ux lol, but yes, now...the project...is finally...over!!!! at least of bleach, next alnst, and then maybe joining them
+#so yeah, that's all
+#date 09/27/26
